@@ -9,13 +9,9 @@
     sim_speed: 1.0
     get_ground_truth: false
     cam_enable: true
-/viewer_node:
+/controller:
   ros__parameters:
-    viewer_topic: /drawn_image
-/classical_node:
-  ros__parameters:
-    debug: false
-# 1 = RED, 2 = BLUE
-/aiming_node:
-  ros__parameters:
-    team_color: 1
+    max_linear_velocity: 5.0
+    max_angular_velocity: 5.0
+    max_pitch_velocity: 5.0
+    max_yaw_velocity: 5.0
