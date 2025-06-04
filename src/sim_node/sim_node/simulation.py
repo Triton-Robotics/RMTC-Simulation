@@ -18,7 +18,7 @@ class Simulation():
     '''
     initializes the simulation with the robots
     '''
-    def __init__(self, cam_hz=40, sim_speed=1):
+    def __init__(self, cam_hz=40, sim_speed=1, shoot_hz=2):
         p.connect(p.GUI)
         # uncomment if you are running without OpenGL
         # p.connect(p.SHARED_MEMORY_SERVER)
@@ -35,10 +35,10 @@ class Simulation():
 
         # initialize our robots. The booleans determine if the robot is controllable
         self.main_robot = Robot(position=[4.2,2.8,0.5],
-                                orientation=p.getQuaternionFromEuler([1.57,0,0]),
+                                orientation=p.getQuaternionFromEuler([0,0,0]),
                                 type=RobotType.HERO,
                                 color=RobotColor.RED)
-        self.robot_one = Robot(position=[4.2,2.2,0.5],
+        self.robot_one = Robot(position=[4.2,2.0,0.5],
                                orientation=p.getQuaternionFromEuler([0,0,0]),
                                type=RobotType.HERO,
                                color=RobotColor.RED)
@@ -53,6 +53,9 @@ class Simulation():
         # other
         self.lidar = Lidar(self.main_robot.id, 0)
         self.step_amount = int(240 * sim_speed // cam_hz)
+        # assuming cam_hz > shoot_hz
+        self.shoot_period = int(cam_hz // shoot_hz)
+        self.count = 0 
         
     '''
     what the simulation should do every 1/CAM_HZ (defined in sim_node)
@@ -61,7 +64,11 @@ class Simulation():
     def step(self, CAM_ENABLE):
         for _ in range(self.step_amount):
             p.stepSimulation()
-            self.controlled_robot.update_robot()
+            self.controlled_robot.move_turret()
+        if self.count == self.shoot_period:
+            self.controlled_robot.shoot_bullet()
+            self.count = 0
+        self.count += 1
         # update the bullets that are in the simulation
         Bullet.bullets = [bullet for bullet in Bullet.bullets if not bullet.update()]
         

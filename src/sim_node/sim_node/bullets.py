@@ -23,8 +23,7 @@ class Bullet:
         #for the timer to remove the bullet
         self.update_count = 0
 
-        model='robot.urdf'
-        with resources.path('sim_node.models.bullet', model) as file_path:
+        with resources.path('sim_node.models.bullet', 'bullet.urdf') as file_path:
             self.id = p.loadURDF(str(file_path), self.position, [0, 0, 0, 1])
         p.resetBaseVelocity(self.id, self.velocity, 
             angularVelocity=[0, 0, 0])

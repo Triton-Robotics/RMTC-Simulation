@@ -23,19 +23,13 @@ class Robot():
     @param orientation: Quaternion orientation of the robot
     @param color: the lightbar color of the robot (red or blue)
     '''
-    def __init__(self, position, orientation, controllable=False, type=RobotType.SENTRY, color=RobotColor.RED):
+    def __init__(self, position, orientation, type=RobotType.SENTRY, color=RobotColor.RED):
         urdf = f"{type}-{color}.urdf"
         with resources.path(f'sim_node.models.{type}', urdf) as file_path:
             self.id = p.loadURDF(str(file_path), position, orientation)
         self.set_camera()
-        self.shoot = False
         self.target_yaw_vel = 0.0
         self.target_pitch_vel = 0.0
-        
-        self.current_linear_velocity = np.zeros(3)
-        self.current_angular_velocity = 0.0
-        self.target_linear_velocity = np.zeros(3)
-        self.target_angular_velocity = 0.0
 
         self.cam_coords = np.zeros(3)
         self.cam_orientation = np.zeros(4)
@@ -62,17 +56,17 @@ class Robot():
         _, _, image, _, _ = p.getCameraImage(width=self.width, height=self.height, viewMatrix=view_mat, projectionMatrix=proj_mat, renderer=p.ER_TINY_RENDERER)
         image = image[:, :, :3]
         return cvtColor(image, COLOR_BGR2RGB)
-    
+
     '''
-    updates the robot's velocities based on the target velocities
+    shoots a bullet if the shoot command is given
     '''
-    def update_robot(self):
-        self.move_turret()
+    def shoot_bullet(self):
+        Bullet(self.cam_coords, self.cam_orientation)
     
     '''
     moves the turret by the pitch and yaw params
-    @param pitch: float in radians to move turret up and down (up is positive)
-    @param yaw: float radians to move turret side to side (right is positive)
+    target_pitch_vel moves the turret up and down (up is positive)
+    target_yaw_vel moves the turret side to side (counter-clockwise is positive)
     '''
     def move_turret(self):
         # yaw is jointIdx 0, pitch is jointIdx 1
@@ -101,10 +95,6 @@ class Robot():
         p.resetBaseVelocity(self.id, 
             linearVelocity=global_velocity.tolist(), 
             angularVelocity=[0, 0, self.current_angular_velocity])
-        
-        # if the robot is shooting, fire a bullet
-        if self.shoot:
-            Bullet(self.cam_coords, self.cam_orientation)
     
     def __del__(self):
         p.disconnect()

@@ -2,12 +2,13 @@
   ros__parameters:
     camera_resolution: 0.4
     cam_hz: 40.0
+    shoot_hz: 10.0
     fov: 34.68
     lidar_enable: false
     lidar_hz: 5.5
     sim_speed: 1.0
     get_ground_truth: false
-    cam_enable: false
+    cam_enable: true
 /viewer_node:
   ros__parameters:
     viewer_topic: /drawn_image

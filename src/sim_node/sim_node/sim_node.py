@@ -23,6 +23,7 @@ class Sim_Node(Node):
         # initialize parameters
         self.declare_parameter('sim_speed', 1.0)
         self.declare_parameter('cam_hz', 20.0)
+        self.declare_parameter('shoot_hz', 2.0)
         self.declare_parameter('lidar_hz', 5.5)
         self.declare_parameter('lidar_enable', True)
         self.declare_parameter('cam_enable', True)
@@ -32,6 +33,7 @@ class Sim_Node(Node):
         # get parameters
         SIM_SPEED = self.get_parameter('sim_speed').value
         CAM_HZ = self.get_parameter('cam_hz').value
+        SHOOT_HZ = self.get_parameter('shoot_hz').value
         LIDAR_HZ = self.get_parameter('lidar_hz').value
         LIDAR_ENABLE = self.get_parameter('lidar_enable').value
         CAM_ENABLE = self.get_parameter('cam_enable').value
@@ -40,7 +42,7 @@ class Sim_Node(Node):
 
         # initializes services and publishers
         self.bridge = CvBridge()
-        self.simulation = Simulation(cam_hz=CAM_HZ, sim_speed=SIM_SPEED)
+        self.simulation = Simulation(cam_hz=CAM_HZ, sim_speed=SIM_SPEED, shoot_hz=SHOOT_HZ)
         self.step_simulation = self.create_timer(1 / CAM_HZ, self.step_simulation)
         self.simulation.main_robot.set_camera(fov=FOV, camera_resolution=CAMERA_RESOLUTION)
         self.image_pub = self.create_publisher(Image, 'camera/image', 10)
