@@ -1,0 +1,20 @@
+/sim_node:
+  ros__parameters:
+    camera_resolution: 0.4
+    cam_hz: 40.0
+    fov: 34.68
+    lidar_enable: false
+    lidar_hz: 5.5
+    sim_speed: 1.0
+    get_ground_truth: false
+    cam_enable: false
+/viewer_node:
+  ros__parameters:
+    viewer_topic: /drawn_image
+/classical_node:
+  ros__parameters:
+    debug: false
+# 1 = RED, 2 = BLUE
+/aiming_node:
+  ros__parameters:
+    team_color: 1

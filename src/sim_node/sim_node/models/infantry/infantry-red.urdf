@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="infantry">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="6.06925946495807E-05 -0.0951517381837546 -0.00195378661860102"
+        rpy="0 0 0" />
+      <mass
+        value="31.9580603600281" />
+      <inertia
+        ixx="0.575658821423168"
+        ixy="-0.000232623478846163"
+        ixz="0.000372103192936311"
+        iyy="0.975286073242314"
+        iyz="0.00748853471499854"
+        izz="0.562657367224856" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://infantry/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="base_link">
+        <color
+          rgba="0.984 0.737 0.020 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://infantry/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="mount_link">
+    <inertial>
+      <origin
+        xyz="-0.010489 0.09779 -1.1047E-09"
+        rpy="0 0 0" />
+      <mass
+        value="2.1267" />
+      <inertia
+        ixx="0.0095801"
+        ixy="-7.7406E-05"
+        ixz="2.458E-11"
+        iyy="0.041997"
+        iyz="-7.3513E-10"
+        izz="0.046704" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://infantry/meshes/mount_link.STL" />
+      </geometry>
+      <material
+        name="mount_link">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://infantry/meshes/mount_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="mount_joint"
+    type="continuous">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="mount_link" />
+    <axis
+      xyz="0 1 0" />
+  </joint>
+  <link
+    name="turret_link">
+    <inertial>
+      <origin
+        xyz="-2.0482E-05 -0.019429 0.0081579"
+        rpy="0 0 0" />
+      <mass
+        value="5.2999" />
+      <inertia
+        ixx="0.053074"
+        ixy="5.1204E-07"
+        ixz="-3.5196E-05"
+        iyy="0.057288"
+        iyz="-0.00072947"
+        izz="0.019007" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://infantry/meshes/turret_link.STL" />
+      </geometry>
+      <material
+        name="turret_link">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://infantry/meshes/turret_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="turret_joint"
+    type="revolute">
+    <origin
+      xyz="0 0.1845 0"
+      rpy="-0.042847 0 0" />
+    <parent
+      link="mount_link" />
+    <child
+      link="turret_link" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="-1.7"
+      upper="1.7"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="plates_link">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://infantry/meshes/plates_link.STL" />
+      </geometry>
+      <material
+        name="plates_link">
+        <color
+          rgba="0 0 0 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://infantry/meshes/plates_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="plates_joint"
+    type="fixed">
+    <origin
+      xyz="-0.25574 -0.14582 -0.05297"
+      rpy="3.1336 0.029996 2.8797" />
+    <parent
+      link="base_link" />
+    <child
+      link="plates_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="lightbars_link">
+    <inertial>
+      <origin
+        xyz="-0.23324 0.0044453 -0.045003"
+        rpy="0 0 0" />
+      <mass
+        value="0.0025567" />
+      <inertia
+        ixx="5.3526E-07"
+        ixy="1.3073E-07"
+        ixz="-1.4311E-13"
+        iyy="8.2392E-08"
+        iyz="5.3408E-13"
+        izz="5.7029E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://infantry/meshes/lightbars_link.STL" />
+      </geometry>
+      <material
+        name="lightbars_link">
+        <color
+          rgba="1 0 0 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://infantry/meshes/lightbars_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="lightbars_joint"
+    type="fixed">
+    <origin
+      xyz="0 0.12792 -0.090009"
+      rpy="-3.1416 0 0" />
+    <parent
+      link="plates_link" />
+    <child
+      link="lightbars_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="numbers_link">
+    <inertial>
+      <origin
+        xyz="8.3148E-10 -0.060203 0.22515"
+        rpy="0 0 0" />
+      <mass
+        value="0.0010445" />
+      <inertia
+        ixx="1.3876E-06"
+        ixy="2.4538E-21"
+        ixz="-7.1633E-21"
+        iyy="4.7391E-07"
+        iyz="-2.4482E-07"
+        izz="1.322E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://infantry/meshes/numbers_link.STL" />
+      </geometry>
+      <material
+        name="numbers_link">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://infantry/meshes/numbers_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="numbers_joint"
+    type="fixed">
+    <origin
+      xyz="-0.007907 0.063961 -0.045004"
+      rpy="3.1416 1.5708 0" />
+    <parent
+      link="plates_link" />
+    <child
+      link="numbers_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+</robot>

@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="sentry">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="0.0058961 -0.10415 -0.0060668"
+        rpy="0 0 0" />
+      <mass
+        value="34.39" />
+      <inertia
+        ixx="0.61402"
+        ixy="-0.0072371"
+        ixz="0.028313"
+        iyy="1.0121"
+        iyz="0.0074469"
+        izz="0.6124" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://sentry/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="base_link">
+        <color
+          rgba="0.984 0.737 0.020 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://sentry/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="mount_link">
+    <inertial>
+      <origin
+        xyz="-0.021651 0.10215 0.023049"
+        rpy="0 0 0" />
+      <mass
+        value="11.727" />
+      <inertia
+        ixx="0.11733"
+        ixy="0.0063296"
+        ixz="0.0020754"
+        iyy="0.1403"
+        iyz="-0.0054707"
+        izz="0.11921" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://sentry/meshes/mount_link.STL" />
+      </geometry>
+      <material
+        name="mount_link">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://sentry/meshes/mount_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="mount_joint"
+    type="continuous">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="mount_link" />
+    <axis
+      xyz="0 1 0" />
+  </joint>
+  <link
+    name="turret_link">
+    <inertial>
+      <origin
+        xyz="0.018816 0.04759 -0.018816"
+        rpy="0 0 0" />
+      <mass
+        value="2.2519" />
+      <inertia
+        ixx="0.028264"
+        ixy="0.011098"
+        ixz="0.011252"
+        iyy="0.031604"
+        iyz="-0.011098"
+        izz="0.028264" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://sentry/meshes/turret_link.STL" />
+      </geometry>
+      <material
+        name="turret_link">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://sentry/meshes/turret_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="turret_joint"
+    type="continuous">
+    <origin
+      xyz="0.039832730842718 0.175264704336287 -0.0398327308427171"
+      rpy="0.0251555330704304 -0.00031643379213156 0.0251555330704238" />
+    <parent
+      link="mount_link" />
+    <child
+      link="turret_link" />
+    <axis
+      xyz="0.707106781186547 0 0.707106781186548" />
+  </joint>
+  <link
+    name="plates_link">
+    <inertial>
+      <origin
+        xyz="1.2306E-09 -0.10279 -8.31E-10"
+        rpy="0 0 0" />
+      <mass
+        value="0.42253" />
+      <inertia
+        ixx="0.00080558"
+        ixy="1.2254E-12"
+        ixz="7.2489E-13"
+        iyy="0.00061977"
+        iyz="-9.8536E-13"
+        izz="0.00080558" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://sentry/meshes/plates_link.STL" />
+      </geometry>
+      <material
+        name="plates_link">
+        <color
+          rgba="0 0 0 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://sentry/meshes/plates_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="plates_joint"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="plates_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="lightbars_link">
+    <inertial>
+      <origin
+        xyz="-4.2633E-14 -0.10205 1.1835E-13"
+        rpy="0 0 0" />
+      <mass
+        value="0.0025567" />
+      <inertia
+        ixx="5.7029E-07"
+        ixy="-9.313E-20"
+        ixz="-1.0254E-20"
+        iyy="4.7362E-08"
+        iyz="9.8106E-20"
+        izz="5.7029E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://sentry/meshes/lightbars_link.STL" />
+      </geometry>
+      <material
+        name="lightbars_link">
+        <color
+          rgba="0 0 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://sentry/meshes/lightbars_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="lightbars_joint"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="plates_link" />
+    <child
+      link="lightbars_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="numbers_link">
+    <inertial>
+      <origin
+        xyz="-1.24344978758018E-14 -0.106157934489693 2.44249065417534E-15"
+        rpy="0 0 0" />
+      <mass
+        value="0.000832737644459615" />
+      <inertia
+        ixx="4.26394453604487E-07"
+        ixy="1.9777721123419E-20"
+        ixz="5.85188924350639E-21"
+        iyy="5.50886885517693E-07"
+        iyz="4.29502359759066E-21"
+        izz="4.26394453604389E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://sentry/meshes/numbers_link.STL" />
+      </geometry>
+      <material
+        name="numbers_link">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://sentry/meshes/numbers_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="numbers_joint"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="plates_link" />
+    <child
+      link="numbers_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+</robot>
