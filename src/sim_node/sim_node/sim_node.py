@@ -5,6 +5,7 @@ from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
 from sensor_msgs.msg import LaserScan
 from .simulation import Simulation
+from messages.msg import Control
 import time
 
 '''
@@ -43,6 +44,7 @@ class Sim_Node(Node):
         self.step_simulation = self.create_timer(1 / CAM_HZ, self.step_simulation)
         self.simulation.main_robot.set_camera(fov=FOV, camera_resolution=CAMERA_RESOLUTION)
         self.image_pub = self.create_publisher(Image, 'camera/image', 10)
+        self.control_sub = self.create_subscription(Control, 'control', self.update_target_velocities, 10)
         if LIDAR_ENABLE:
             self.get_lidar = self.create_timer(1 / LIDAR_HZ, self.get_lidar)
             self.scan_pub = self.create_publisher(LaserScan, '/scan', 10)
@@ -59,34 +61,51 @@ class Sim_Node(Node):
             self.image_pub.publish(image)
         else:
             self.simulation.step(self.CAM_ENABLE)
+
+    '''
+    updates the target velocities of the main robot based on the control message
+    @param msg: Control message containing the target velocities and shoot command
+    '''
+    def update_target_velocities(self, msg: Control):
+        robot = self.simulation.controlled_robot
+        # turret
+        robot.shoot = msg.shoot
+        robot.target_yaw_vel = msg.yaw_vel     # invert because of urdf orientation
+        robot.target_pitch_vel = msg.pitch_vel
+        # movement
+        robot.target_x_vel = -msg.x_vel
+        robot.target_y_vel = -msg.y_vel
+        robot.target_angular_velocity = msg.angular_vel
     
     '''
     gets the LIDAR scan and publishes it
     '''
     def get_lidar(self):
         distances = self.simulation.get_scan()
-        self.scan_pub.publish(get_scan_msg(distances, time.time()))
+        self.scan_pub.publish(self.get_scan_msg(distances, time.time()))
 
-'''
-generates LaserScan message based on provided 
-distances and current time
-'''
-def get_scan_msg(distances, current_time):
-    scan = LaserScan()
-    scan.header.stamp.sec = int(current_time)
-    scan.header.stamp.nanosec = int((current_time - int(current_time)) * 1e9)
-    scan.header.frame_id = 'laser'
-    scan.angle_min = -math.pi
-    scan.angle_max = math.pi
-    scan.angle_increment = (2 * math.pi) / len(distances)
-    scan.time_increment = 0.0
-    scan.scan_time = 1./5.5 
-    scan.range_min = 0.5
-    scan.range_max = 12.0
-    scan.ranges = distances
-    scan.intensities = [40. for _ in range(len(distances))]
-    return scan
-
+    '''
+    generates LaserScan message based on provided 
+    distances and current time
+    @param distances: list of distances for the scan
+    @param current_time: current time in seconds
+    @return: LaserScan message with the given distances and time
+    '''
+    def get_scan_msg(distances, current_time):
+        scan = LaserScan()
+        scan.header.stamp.sec = int(current_time)
+        scan.header.stamp.nanosec = int((current_time - int(current_time)) * 1e9)
+        scan.header.frame_id = 'laser'
+        scan.angle_min = -math.pi
+        scan.angle_max = math.pi
+        scan.angle_increment = (2 * math.pi) / len(distances)
+        scan.time_increment = 0.0
+        scan.scan_time = 1./5.5 
+        scan.range_min = 0.5
+        scan.range_max = 12.0
+        scan.ranges = distances
+        scan.intensities = [40. for _ in range(len(distances))]
+        return scan
 
 '''
 main function for our simulation node

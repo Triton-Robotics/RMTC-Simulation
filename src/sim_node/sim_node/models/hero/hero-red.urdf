@@ -148,7 +148,7 @@
     <child
       link="turret_link" />
     <axis
-      xyz="1 0 0" />
+      xyz="-1 0 0" />
   </joint>
   <link
     name="plates_link">

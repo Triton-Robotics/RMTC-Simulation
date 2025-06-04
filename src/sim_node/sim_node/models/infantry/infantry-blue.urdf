@@ -148,7 +148,7 @@
     <child
       link="turret_link" />
     <axis
-      xyz="1 0 0" />
+      xyz="-1 0 0" />
     <limit
       lower="-1.7"
       upper="1.7"

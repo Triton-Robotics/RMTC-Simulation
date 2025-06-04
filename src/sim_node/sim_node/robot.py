@@ -4,20 +4,17 @@ import numpy as np
 from cv2 import cvtColor, COLOR_BGR2RGB
 from .bullets import Bullet
 
-from .utils import FromSTM32, RobotColor, RobotType
+from .utils import RobotColor, RobotType
 
 # constants obtained from our camera we multiply by camera_resolution
 CAMERA_WIDTH = 1280
 CAMERA_HEIGHT = 1024
 ASPECT_RATIO = CAMERA_WIDTH / CAMERA_HEIGHT
 
-# constants for robot movement
-MAX_LINEAR_VELOCITY = 2.5
-MAX_ANGULAR_VELOCITY = 5.0 
-
 '''
-robots.py is a file for the robot class, where each
-robot is a urdf mesh of infantry
+robots.py is a file for the robot class, where each robot is a pybullet URDF model.
+The robot class contains methods to control the robot's turret and get the camera 
+view from the robot's turret.
 '''
 class Robot():
     '''
@@ -32,6 +29,8 @@ class Robot():
             self.id = p.loadURDF(str(file_path), position, orientation)
         self.set_camera()
         self.shoot = False
+        self.target_yaw_vel = 0.0
+        self.target_pitch_vel = 0.0
         
         self.current_linear_velocity = np.zeros(3)
         self.current_angular_velocity = 0.0
@@ -45,39 +44,6 @@ class Robot():
         self.fov = fov
         self.width = int(CAMERA_WIDTH * camera_resolution)
         self.height = int(CAMERA_HEIGHT * camera_resolution)
-
-    '''
-    returns the state of the robot
-    pitch and yaw motor angles are inverted 
-    to match the standard coordinate system
-    @return: FromSTM32 state object
-    '''
-    def get_state(self):
-        yaw_state = p.getJointState(bodyUniqueId=self.id, jointIndex=0)
-        pitch_state = p.getJointState(bodyUniqueId=self.id, jointIndex=1)
-        body_vel = p.getBaseVelocity(bodyUniqueId=self.id)
-        data = FromSTM32(x_vel=body_vel[0][0],
-                         y_vel=body_vel[0][2],
-                         pitch=-pitch_state[0],
-                         pitch_vel=pitch_state[1],
-                         yaw=-yaw_state[0],
-                         yaw_vel=yaw_state[1]
-                        )
-        return data
-
-    '''
-    moves the turret by the pitch and yaw params
-    @param pitch: float in radians to move turret up and down (up is positive)
-    @param yaw: float radians to move turret side to side (right is positive)
-    '''
-    def set_turret(self, pitch=0.0, yaw=0.0, shoot=False):
-        # yaw is jointIdx 0, pitch is jointIdx 1
-        p.setJointMotorControlArray(bodyUniqueId=self.id,
-                                    jointIndices=[0, 1],
-                                    controlMode=p.POSITION_CONTROL,
-                                    targetPositions=[-yaw, -pitch],
-                                    targetVelocities=[0.2, 0.2])
-        self.shoot = shoot
     
     '''
     calculates the camera view from the given robot's turret
@@ -96,26 +62,29 @@ class Robot():
         _, _, image, _, _ = p.getCameraImage(width=self.width, height=self.height, viewMatrix=view_mat, projectionMatrix=proj_mat, renderer=p.ER_TINY_RENDERER)
         image = image[:, :, :3]
         return cvtColor(image, COLOR_BGR2RGB)
+    
+    '''
+    updates the robot's velocities based on the target velocities
+    '''
+    def update_robot(self):
+        self.move_turret()
+    
+    '''
+    moves the turret by the pitch and yaw params
+    @param pitch: float in radians to move turret up and down (up is positive)
+    @param yaw: float radians to move turret side to side (right is positive)
+    '''
+    def move_turret(self):
+        # yaw is jointIdx 0, pitch is jointIdx 1
+        p.setJointMotorControlArray(bodyUniqueId=self.id,
+                                    jointIndices=[0, 1],
+                                    controlMode=p.VELOCITY_CONTROL,
+                                    targetVelocities=[self.target_yaw_vel, self.target_pitch_vel])
 
     '''
     updates the current velocities and applies them to the robot
     '''
-    def update_movement(self):
-        for i in range(2):
-            if self.current_linear_velocity[i] < self.target_linear_velocity[i]:
-                self.current_linear_velocity[i] = min(self.current_linear_velocity[i] + 
-                                                      MAX_LINEAR_VELOCITY/3, self.target_linear_velocity[i])
-            elif self.current_linear_velocity[i] > self.target_linear_velocity[i]:
-                self.current_linear_velocity[i] = max(self.current_linear_velocity[i] - 
-                                                      MAX_LINEAR_VELOCITY/3, self.target_linear_velocity[i])
-
-        if self.current_angular_velocity < self.target_angular_velocity:
-            self.current_angular_velocity = min(self.current_angular_velocity + 
-                                                MAX_ANGULAR_VELOCITY/3, self.target_angular_velocity)
-        elif self.current_angular_velocity > self.target_angular_velocity:
-            self.current_angular_velocity = max(self.current_angular_velocity - 
-                                                MAX_ANGULAR_VELOCITY/3, self.target_angular_velocity)
-
+    def move_robot(self):
         _, orientation = p.getBasePositionAndOrientation(self.id)
         _, _, yaw = p.getEulerFromQuaternion(orientation)
 
@@ -135,13 +104,7 @@ class Robot():
         
         # if the robot is shooting, fire a bullet
         if self.shoot:
-            self.fire_bullet()
-    
-    '''
-    fires a bullet from the robot
-    '''
-    def fire_bullet(self):
-        Bullet(self.cam_coords, self.cam_orientation)
+            Bullet(self.cam_coords, self.cam_orientation)
     
     def __del__(self):
         p.disconnect()
