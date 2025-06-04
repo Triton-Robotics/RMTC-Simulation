@@ -70,14 +70,12 @@ class Sim_Node(Node):
     '''
     def update_target_velocities(self, msg: Control):
         robot = self.simulation.controlled_robot
-        # turret
         robot.shoot = msg.shoot
-        robot.target_yaw_vel = msg.yaw_vel     # invert because of urdf orientation
-        robot.target_pitch_vel = msg.pitch_vel
-        # movement
-        robot.target_x_vel = -msg.x_vel
-        robot.target_y_vel = -msg.y_vel
-        robot.target_angular_velocity = msg.angular_vel
+        robot.move_turret(msg.pitch_vel, msg.yaw_vel)
+        # drive the robot with the given velocities
+        robot.x_vel = msg.x_vel
+        robot.y_vel = msg.y_vel
+        robot.angular_vel = msg.angular_vel
     
     '''
     gets the LIDAR scan and publishes it

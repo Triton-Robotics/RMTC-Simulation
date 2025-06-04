@@ -28,8 +28,10 @@ class Robot():
         with resources.path(f'sim_node.models.{type}', urdf) as file_path:
             self.id = p.loadURDF(str(file_path), position, orientation)
         self.set_camera()
-        self.target_yaw_vel = 0.0
-        self.target_pitch_vel = 0.0
+        self.shoot = False
+        self.x_vel = 0.0
+        self.y_vel = 0.0
+        self.angular_vel = 0.0
 
         self.cam_coords = np.zeros(3)
         self.cam_orientation = np.zeros(4)
@@ -61,24 +63,28 @@ class Robot():
     shoots a bullet if the shoot command is given
     '''
     def shoot_bullet(self):
-        Bullet(self.cam_coords, self.cam_orientation)
+        if self.shoot:
+            Bullet(self.cam_coords, self.cam_orientation)
     
     '''
     moves the turret by the pitch and yaw params
-    target_pitch_vel moves the turret up and down (up is positive)
-    target_yaw_vel moves the turret side to side (counter-clockwise is positive)
+    @param pitch_vel moves the turret up and down (up is positive)
+    @param yaw_vel moves the turret side to side (counter-clockwise is positive)
     '''
-    def move_turret(self):
+    def move_turret(self, pitch_vel, yaw_vel):
         # yaw is jointIdx 0, pitch is jointIdx 1
         p.setJointMotorControlArray(bodyUniqueId=self.id,
                                     jointIndices=[0, 1],
                                     controlMode=p.VELOCITY_CONTROL,
-                                    targetVelocities=[self.target_yaw_vel, self.target_pitch_vel])
+                                    targetVelocities=[yaw_vel, pitch_vel])
 
     '''
     updates the current velocities and applies them to the robot
+    x_vel is forward/backward velocity, positive is forward
+    y_vel is left/right velocity, positive is right
+     is the angular velocity, positive is counter-clockwise
     '''
-    def move_robot(self):
+    def drive(self):
         _, orientation = p.getBasePositionAndOrientation(self.id)
         _, _, yaw = p.getEulerFromQuaternion(orientation)
 
@@ -87,14 +93,14 @@ class Robot():
         rotation_matrix_2d = np.array([[cos_yaw, -sin_yaw],
                                        [sin_yaw, cos_yaw]])
 
-        local_velocity_2d = np.array([self.current_linear_velocity[0], self.current_linear_velocity[1]])
+        local_velocity_2d = np.array([self.y_vel, self.x_vel])
         global_velocity_2d = np.dot(rotation_matrix_2d, local_velocity_2d)
 
         global_velocity = np.array([global_velocity_2d[0], global_velocity_2d[1], 0])
 
         p.resetBaseVelocity(self.id, 
             linearVelocity=global_velocity.tolist(), 
-            angularVelocity=[0, 0, self.current_angular_velocity])
+            angularVelocity=[0, 0, self.angular_vel])
     
     def __del__(self):
         p.disconnect()

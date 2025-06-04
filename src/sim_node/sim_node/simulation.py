@@ -64,10 +64,10 @@ class Simulation():
     def step(self, CAM_ENABLE):
         for _ in range(self.step_amount):
             p.stepSimulation()
-            self.controlled_robot.move_turret()
         if self.count == self.shoot_period:
             self.controlled_robot.shoot_bullet()
             self.count = 0
+        self.controlled_robot.drive()
         self.count += 1
         # update the bullets that are in the simulation
         Bullet.bullets = [bullet for bullet in Bullet.bullets if not bullet.update()]
